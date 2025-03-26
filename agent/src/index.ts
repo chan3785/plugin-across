@@ -20,7 +20,7 @@ import {
     validateCharacterConfig,
 } from "@elizaos/core";
 import { defaultCharacter } from "./defaultCharacter.ts";
-
+import { Across } from "@elizaos/plugin-across";
 import { bootstrapPlugin } from "@elizaos/plugin-bootstrap";
 import JSON5 from 'json5';
 
@@ -627,6 +627,7 @@ export async function createAgent(
         // character.plugins are handled when clients are added
         plugins: [
             bootstrapPlugin,
+            Across
         ]
             .flat()
             .filter(Boolean),
