@@ -1,16 +1,16 @@
-import { arbitrum, arbitrumSepolia, base } from "viem/chains";
+import { arbitrum, arbitrumSepolia, base, sepolia } from "viem/chains";
 
 export const supportedChains = [
     {
-        chainName: "arbitrum",
-        chainId: arbitrum.id,
-        viemChain: arbitrum,
-        tokenAddress: { usdc: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831" },
+        chainName: "sepolia",
+        chainId: sepolia.id,
+        viemChain: sepolia,
+        tokenAddress: { weth: "0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14" },
     },
     {
-        chainName: "base",
-        chainId: base.id,
-        viemChain: base,
-        tokenAddress: { usdc: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913" },
+        chainName: "arbitrum sepolia",
+        chainId: arbitrumSepolia.id,
+        viemChain: arbitrumSepolia,
+        tokenAddress: { weth: "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73" },
     },
 ];

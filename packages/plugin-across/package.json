@@ -28,7 +28,7 @@
     ],
     "dependencies": {
         "@across-protocol/app-sdk": "^0.2.0",
-        "@elizaos/core": "1.0.0-beta.7",
+        "@elizaos/core": "0.25.9",
         "viem": "^2.23.15",
         "zod": "3.24.2"
     },
