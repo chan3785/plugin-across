@@ -22,17 +22,22 @@ import { stat } from "node:fs";
 
 // 입금 내용의 인터페이스 정의, Content를 확장
 export interface DepositContent extends Content {
+    recipient: string;
     amount: string | number; // 전송 금액
     sourceChain: string; // 출발 체인 이름
     destinationChain: string; // 도착 체인 이름
     tokenName: string; // 토큰 이름
 }
 
+function isValidAddress(value: any): value is Address {
+    return typeof value === "string" && /^0x[0-9a-fA-F]+$/.test(value);
+}
 
 // 타입 가드: 주어진 내용이 DepositContent인지 확인
 function isDepositContent(content: any): content is DepositContent {
     console.log("Content for Bridge", content); // 디버깅용 콘솔 로그
     return (
+        isValidAddress(content.recipient) && // 수신자 주소가 문자열인지 확인
         (typeof content.amount === "string" || typeof content.amount === "number") && // 금액이 문자열 또는 bigint인지 확인
         typeof content.sourceChain === "string" && // 출발 체인 이름이 문자열인지 확인
         typeof content.destinationChain === "string" && // 도착 체인 이름이 문자열인지 확인
@@ -48,6 +53,7 @@ const depositTemplate = `Respond with a JSON markdown block containing only the 
 Example response:
 \`\`\`json
 {
+    "recipient": "0x2badda48c062e861ef17a96a806c451fd296a49f45b272dee17f85b0e32663fd",
     "amount": "1000",
     "sourceChain": "arbitrum",
     "destinationChain": "base",
@@ -58,6 +64,7 @@ Example response:
 {{recentMessages}}
 
 Given the recent messages, extract the following information about the requested token transfer:
+- Recipient wallet address
 - Amount to transfer
 - source chain id
 - destination chain id
@@ -177,12 +184,15 @@ export default {
             // 입금 매개변수 준비
             const depositParams = {
                 ...quote.deposit,
+                recipient: content.recipient as  Address,
                 inputAmount: adjustedInputAmount,
                 outputAmount: inputAmount,
             };
 
             console.log("depositParams:", depositParams)
-
+            
+            let sourceTxHash: string | undefined;
+            let destinationTxHash: string | undefined;
             
             // 견적 실행 (전송 수행)
             await acrossClient.executeQuote({
@@ -218,6 +228,7 @@ export default {
                                 txReceipt.transactionHash
                             )
                         ); // 트랜잭션 URL 로그
+                        sourceTxHash = createTransactionUrl(sourceChainConfig.viemChain, txReceipt.transactionHash)
                     }
                     if (
                         progress.step === "fill" &&
@@ -233,6 +244,10 @@ export default {
                                 txReceipt.transactionHash
                             )
                         ); // 트랜잭션 URL 로그
+                        destinationTxHash = createTransactionUrl(
+                            destinationChainConfig.viemChain,
+                            txReceipt.transactionHash
+                        )
                         console.log("actionSuccess: ",actionSuccess)
                         if (actionSuccess) {
                             console.log(`Cross chain messages were successful`); // 성공 로그
@@ -249,12 +264,14 @@ export default {
 
             if (callback) {
                 callback({
-                    text: `Successfully Bridged ${content.amount} ${content.tokenName} to ${content.destinationChain}`, // 성공 메시지
+                    text: `Successfully Bridged ${content.amount} ${content.tokenName} to ${content.recipient}, source chain Tx: ${sourceTxHash}, destination chain Tx: ${destinationTxHash}`, // 성공 메시지
                     content: {
                         success: true,
                         amount: content.amount,
+                        recipient: content.recipient,
                         sourceChain: content.sourceChain,
-                        destinationChain: content.destinationChain
+                        destinationChain: content.destinationChain,
+                        token: content.tokenName
                     },
                 });
             }
@@ -277,7 +294,7 @@ export default {
             {
                 user: "{{name1}}",
                 content: {
-                    text: "Bridge 69 USDC tokens from arbitrum to base",
+                    text: "Bridge 69 USDC tokens to 0x4f2e63be8e7fe287836e29cde6f3d5cbc96eefd0c0e3f3747668faa2ae7324b0 from arbitrum to base",
                 },
             },
             {
@@ -290,7 +307,7 @@ export default {
             {
                 user: "{{name2}}",
                 content: {
-                    text: "Successfully bridged 69 USDC tokens, Transaction: 0x39a8c432d9bdad993a33cc1faf2e9b58fb7dd940c0425f1d6db3997e4b4b05c0",
+                    text: "Successfully bridged 69 USDC tokens to 0x4f2e63be8e7fe287836e29cde6f3d5cbc96eefd0c0e3f3747668faa2ae7324b0, Transaction: 0x39a8c432d9bdad993a33cc1faf2e9b58fb7dd940c0425f1d6db3997e4b4b05c0",
                 },
             },
         ],
