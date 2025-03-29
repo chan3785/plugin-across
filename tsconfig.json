@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "lib": ["ESNext"],
+    "target": "ESNext",
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": false,
+    "allowImportingTsExtensions": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,  // JavaScript 파일 생성을 위해 false로 변경
+    "resolveJsonModule": true,
+    "noImplicitAny": false,
+    "allowJs": true,
+    "checkJs": false,
+    "noEmitOnError": false,
+    "moduleDetection": "force",
+    "allowArbitraryExtensions": true,
+    "baseUrl": ".",
+    "paths": {
+      "@elizaos/core": ["../core/src"],  // 빌드된 dist 폴더 참조 (권장)
+      "@elizaos/core/*": ["../core/src/*"]
+    }
+  },
+  "include": ["src/**/*.ts"]
+}
