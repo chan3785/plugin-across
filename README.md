@@ -8,5 +8,5 @@ ACROSS_PRIVATE_KEY=  // YOUR WALLET PRIVATE KEY
 
 #### Examples
 ```
-can you Bridge {amount} {token name} from {source chain name} to {destination chain name}?
+can you Bridge {amount} {token name} from {source chain name} to {destination chain name} to {recipient address}?
 ```
