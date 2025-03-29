@@ -1,4 +1,4 @@
-## @elizaOS/plugin-across
+## @elizaos/plugin-across
 it's supporting bridge asset using across sdk.
 
 ## How to use
